@@ -6,6 +6,7 @@
     <title>JS-hw-07-EventsBasics</title>
 </head>
 <body>
+
 <header>
     <div class="container">
         <div class="row menu">
@@ -14,15 +15,15 @@
                 <div class="dropdown">
                     <button class="btn dropbtn">Settings</button>
                     <div class="dropdown-content">
-                        <a href="#">+</a>
-                        <a href="#">-</a>
-                        <a href="#">*</a>
-                        <a href="#">/</a>
+                        <a href="#" class="selected" data-value="add">+</a>
+                        <a href="#" class="selected" data-value="subtract">-</a>
+                        <a href="#" class="selected" data-value="divide">/</a>
+                        <a href="#" class="selected" data-value="multiply">*</a>
                     </div>
                 </div>
             </div>
             <div class="column">
-                <button class="btn">Check</button>
+                <button class="btn check">Check</button>
             </div>
         </div>
     </div>
@@ -31,24 +32,30 @@
     <div class="container">
         <div class="row">
             <div class="column">
-                <span>2 + 3 = </span>
+                <span class="expression">2 + 3 = </span>
                 <input type="text">
-                <span>true</span>
+                <span class="answer-eval">true</span>
             </div>
-         <div class="column">
-                <span>2 + 3 = </span>
-                <input type="text">
-                <span>true</span>
+            <div class="row">
+                <div class="column">
+                    <span class="expression">2 + 3 = </span>
+                    <input type="text">
+                    <span class="answer-eval">true</span>
+                </div>
             </div>
-         <div class="column">
-                <span>2 + 3 = </span>
-                <input type="text">
-                <span>true</span>
+            <div class="row">
+                <div class="column">
+                    <span class="expression">2 + 3 = </span>
+                    <input type="text">
+                    <span class="answer-eval">true</span>
+                </div>
             </div>
-         <div class="column">
-                <span>2 + 3 = </span>
-                <input type="text">
-                <span>true</span>
+            <div class="row">
+                <div class="column">
+                    <span class="expression">2 + 3 = </span>
+                    <input type="text">
+                    <span class="answer-eval">true</span>
+                </div>
             </div>
         </div>
     </div>

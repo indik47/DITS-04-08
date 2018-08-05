@@ -10,7 +10,6 @@ body, html {
     --main-color: #4aad8a;
     --secondary-color: #9aaba4;
     --main-color-hover: #3d8e71;
-
 }
 
 .container {
@@ -116,10 +115,15 @@ input {
 }
 
 /* Change color of dropdown links on hover */
-.dropdown-content a:hover {background-color: #ddd;}
+/*.dropdown-content a:hover {background-color: #ddd;}*/
 
 /* Show the dropdown menu on hover */
 .dropdown:hover .dropdown-content {display: block;}
 
 /* Change the background color of the dropdown button when the dropdown content is shown */
 .dropdown:hover .dropbtn {background-color: var(--main-color-hover);}
+
+
+.selected {
+    background-color: var(--main-color);
+}
