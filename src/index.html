@@ -11,7 +11,7 @@
     <div class="container">
         <div class="row menu">
             <div class="column">
-                <button class="btn">Test</button>
+                <button class="btn start">New test</button>
                 <div class="dropdown">
                     <button class="btn dropbtn">Settings</button>
                     <div class="dropdown-content">
@@ -29,37 +29,21 @@
     </div>
 </header>
 <main>
-    <div class="container">
+    <div class="container expressions">
         <div class="row">
-            <div class="column">
-                <span class="expression">2 + 3 = </span>
-                <input type="text">
-                <span class="answer-eval">true</span>
+        </div>
+    </div>
+    <div class="end-screen">
+        <div class="end-screen__inner">
+            <div>
+                <p class="end-screen__title">All tests are done!</p>
             </div>
-            <div class="row">
-                <div class="column">
-                    <span class="expression">2 + 3 = </span>
-                    <input type="text">
-                    <span class="answer-eval">true</span>
-                </div>
-            </div>
-            <div class="row">
-                <div class="column">
-                    <span class="expression">2 + 3 = </span>
-                    <input type="text">
-                    <span class="answer-eval">true</span>
-                </div>
-            </div>
-            <div class="row">
-                <div class="column">
-                    <span class="expression">2 + 3 = </span>
-                    <input type="text">
-                    <span class="answer-eval">true</span>
-                </div>
-            </div>
+            <button class="btn end-screen__start">Start again</button>
+            <button class="btn end-screen__cancel">Cancel</button>
         </div>
     </div>
 </main>
-<script src="eventBasics.js"></script>
+<script src="events.js"></script>
+<script src="formInitialization.js"></script>
 </body>
 </html>
