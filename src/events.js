@@ -40,7 +40,7 @@ var initCheckBtn = function () {
             if ( normalizedAnswer === tests[testId].result && input.value !== '') {
                 tests[testId].resolved = true;
                 input.nextSibling.innerText = true;
-                input.nextSibling.style.backgroundColor = '#3d8e71';
+                input.nextSibling.style.backgroundColor = 'var(--main-color)';
             }
             else {
                 tests[testId].resolved = false;

@@ -10,7 +10,7 @@ body, html {
     box-sizing: border-box;
     --main-color: #4aad8a;
     --secondary-color: #9aaba4;
-    --main-color-hover: #3d8e71;
+    --main-color-hover: #487866;
 }
 
 .container {
@@ -108,7 +108,7 @@ body, html {
 
 span {
     font-family: Lato;
-    width: 85px;
+    width: 100px;
     padding: 15px 15px;
     font-size: 14px;
     text-align: center;
@@ -133,6 +133,10 @@ input {
     border-radius: 5px;
     margin-right: 20px;
     transition: 0.2s;
+}
+
+.answer-eval {
+    background-color: var(--main-color-hover);
 }
 
 .selected {

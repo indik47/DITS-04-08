@@ -191,7 +191,6 @@ var generateTests = function () {
     for (var i = 0; i < NUMBER_OF_TESTS; i++) {
        generateSingleTest(i);
     }
-    console.log(tests);
 };
 
 /**
@@ -201,22 +200,35 @@ var generateTests = function () {
 var onSettingsChange = function (setting) {
     var selectedOperators = getSelectedOperators();
     var expressionSpans = document.querySelectorAll('.expression');
+    var answerSpans = document.querySelectorAll('.answer-eval');
 
     if ( setting === 'operatorRemoved' ) {
+        replaceTestsForDisabledOperators();
+    }
+
+    if ( setting === 'operatorAdded' ) {
+        replaceUnresolvedTests();
+    }
+
+    function replaceTestsForDisabledOperators() {
         Array.prototype.forEach.call(expressionSpans, span => {
-            if ( !selectedOperators.includes(tests[span.dataset.id].operator)) {
+            if (!selectedOperators.includes(tests[span.dataset.id].operator)) {
                 var row = span.parentNode.parentNode;
                 row.parentNode.removeChild(row);
                 generateSingleTest(span.dataset.id);
             }
         })
     }
-    if ( setting === 'operatorAdded' ) {
-        Array.prototype.forEach.call(expressionSpans, (span, index) => {
-            console.log('111');
+    function replaceUnresolvedTests() {
+        var unresolvedTests = Array.prototype.filter.call(answerSpans, span => {
+            return span.innerText !== `true`;
+        });
+        unresolvedTests.forEach(test => {
+            var row = test.parentNode.parentNode;
+            row.parentNode.removeChild(row);
+            generateSingleTest(row.firstChild.firstChild.dataset.id);
         })
     }
-
 };
 
 initStartBtn();
