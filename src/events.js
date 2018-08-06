@@ -3,28 +3,25 @@
 /**
  * Initializes dropdown functionality to select/deselect math operators
  */
-var initDropDown = function (){
+var initSettingsDropDown = function (){
     var dropDown = document.querySelector('.dropdown-content');
 
     Array.prototype.forEach.call(dropDown.children, child => {
         child.addEventListener('click', function () {
+            //toggle selection on settings dropdown
             child.classList.toggle('selected');
-            //update operator
-            child.classList.contains('selected') ? changeOperator(child.dataset.value, true) : changeOperator(child.dataset.value, false);
+
+            //update operators object and document
+            if (child.classList.contains('selected')) {
+                changeOperator(child.dataset.value, true);
+                onSettingsChange('operatorAdded');
+            } else {
+                changeOperator(child.dataset.value, false);
+                onSettingsChange('operatorRemoved');
+            }
         });
     });
 };
-
-/**
- * Checks if test has been done correctly and initiates end screen
- * @param answersSummary {array} - true/false values for every user answer in the test
- */
-function checkTest(answersSummary) {
-    if (!answersSummary.includes(false)) {
-        return true;
-    }
-    return false;
-}
 
 /**
  * Initializes Check button functionality
@@ -34,24 +31,26 @@ var initCheckBtn = function () {
 
     checkBtn.addEventListener('click', function () {
         var userInputs = document.querySelectorAll('input');
-        var answerSpans = document.querySelectorAll('.answer-eval');
-        var answersSummary = [];
+        var normalizedAnswer;
 
-        userInputs.forEach( (input, index) => {
-            if ( Number(input.value) === answers[index] && input.value !== '' ) {
-                answerSpans[index].innerText = true;
-                answerSpans[index].style.backgroundColor = '#3d8e71';
-                answersSummary.push(true);
+        userInputs.forEach( input => {
+            normalizedAnswer = Number( input.value.replace(',', '.') );         //replace ',' if user entered it instead of '.'
+            var testId = input.previousSibling.dataset.id;
+
+            if ( normalizedAnswer === tests[testId].result && input.value !== '') {
+                tests[testId].resolved = true;
+                input.nextSibling.innerText = true;
+                input.nextSibling.style.backgroundColor = '#3d8e71';
             }
             else {
-                answerSpans[index].innerText = false;
-                answerSpans[index].style.backgroundColor = '#984053';
-                answersSummary.push(false);
+                tests[testId].resolved = false;
+                input.nextSibling.innerText = false;
+                input.nextSibling.style.backgroundColor = '#984053';
             }
         });
 
-        if ( checkTest(answersSummary) ) {
-            showEndScreen();
+        if ( tests.isResolved() ) {
+            showEndScreen('You completed the test!');
         }
     });
 };
@@ -73,39 +72,26 @@ var highlightActiveInput = function () {
     });
 };
 
-function fillTests() {
-        answers = [];
-
-        for (var i = 0; i < 2; i++) {
-            var expression = getExpression();
-            var span = initForm();
-            span.innerText = expression.value;
-            answers.push(expression.result);
-    }
-}
-
-function generateTests() {
-    initPage();
-    fillTests();
-    highlightActiveInput();
-}
-
 /**
- * Initializes tests at Test button click
+ * Initializes Test button click with new set of tests
  */
 var initStartBtn = function () {
     document.querySelector('.btn.start').addEventListener('click', function () {
-        generateTests();
+        tests.isResolved() ? askToStartNewTest('You completed the test!'): askToStartNewTest('Current test not finished');
     });
 };
 
-//Start again button at end screen
+/**
+ * Start again button at end screen
+ */
 document.querySelector('.btn.end-screen__start').addEventListener('click', function () {
-    generateTests();
+    startNewTest();
     hideEndScreen();
 });
 
-//Cancel again button at end screen
+/**
+ * Cancel again button at end screen
+ */
 document.querySelector('.btn.end-screen__cancel').addEventListener('click', function () {
     hideEndScreen();
 });

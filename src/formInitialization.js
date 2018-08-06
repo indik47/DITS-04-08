@@ -1,28 +1,29 @@
 'use strict';
 
+var NUMBER_OF_TESTS = 8;
 var operators = {
     add: true,
     subtract: true,
     divide: true,
     multiply: true
 };
-var answers = [];
-/**
- * Initialize page
- */
-var initPage = function () {
-    var parent = document.querySelector('.container.expressions');
-    parent.innerHTML = '';
+
+var tests = {
+    isResolved: function () {
+        for (var value of Object.values(tests)) {
+            if (!value.resolved) {
+                return false;
+            }
+        }
+        return true;
+    }
 };
 
-/**
- * 
- * @param operatorName
- * @param val
- */
-function changeOperator(operatorName, val) {
-    operators[operatorName] = val;
-}
+//exclude tests.isResolved method from iteration over tests.values
+Object.defineProperty(tests, "isResolved", {
+    enumerable: false
+});
+
 
 /**
  * Returns random number
@@ -34,14 +35,24 @@ var getNumber = function (max) {
     return Number(result);
 };
 
+function getSelectedOperators() {
+    var selectedOperators = [];
+    for (var key in operators) {
+        if (operators[key] === true) {
+            selectedOperators.push(key);
+        }
+    }
+    return selectedOperators;
+}
+
 /**
  *  Get the math operator
   * @return {string}
  */
 var getOperator = function () {
-    //filter selected operators from dropdown
-    var selectedOperators = Object.keys(operators).filter( operator => operators[operator] === true );
-    //chose random operator
+    //filter only selected operators from Settings dropdown
+    var selectedOperators = getSelectedOperators();
+    //choose random operator
     var randomIndex = getNumber(selectedOperators.length - 1);
     return selectedOperators[randomIndex];
 };
@@ -50,42 +61,42 @@ var getOperator = function () {
  * Generate math expression for tests
  * @return {{value: string, result: number}} - value to user display, result for test checking
  */
-var getExpression = function () {
+var getTest = function () {
     var operator = getOperator();
-    var number1 = getNumber(10);
-    var number2 = getNumber(10);
+    var number1 = Number(getNumber(10));
+    var number2 = Number(getNumber(10));
 
     switch (operator){
         case 'add':
             return { value : `${number1} + ${number2} =`,
-                     result: Number(number1) + Number(number2)
-            };
+                     result: number1 + number2,
+                     operator : operator
+                    };
         case 'subtract':
             return { value : `${number1} - ${number2} =`,
-                     result: Number(number1) - Number(number2)
+                     result: number1 - number2,
+                     operator : operator
             };
         case 'divide':
+            while (number2 === 0) { number2 = Number(getNumber(10)); }             //resolves division by 0 case
+            while ( (number1/number2).toString().length > 5 ) { number2++; }       //resolves 0.nnnnnnnnnnnn cases
             return { value : `${number1} / ${number2} =`,
-                     result: Number(number1) / Number(number2)
+                     result: number1 / number2,
+                     operator : operator
             };
         case 'multiply':
             return { value : `${number1} * ${number2} =`,
-                     result: Number(number1) * Number(number2)
+                     result: number1 * number2,
+                     operator : operator
             };
     }
 };
 
-// /**
-//  * Fill out the tests and answers for them
-//  */
-// var generateExpression = function (span){
-//         var expression = getExpression();
-//         answers.push(expression.result);
-//         span.innerText = expression.value;
-// };
-
-var initForm = function(){
-    var parent = document.querySelector('.container.expressions');
+/**
+ * Makes HTML layout for one test
+ * @return {HTMLSpanElement} - row element with all the children
+ */
+var makeRowLayout = function(){
     var rowDiv = document.createElement('div');
     rowDiv.className = 'row';
     var columnDiv = document.createElement('div');
@@ -98,29 +109,121 @@ var initForm = function(){
     answerSpan.className = 'answer-eval';
     answerSpan.innerText = '-';
 
-    parent.appendChild(rowDiv);
     rowDiv.appendChild(columnDiv);
     columnDiv.appendChild(expressionSpan);
     columnDiv.appendChild(input);
     columnDiv.appendChild(answerSpan);
 
-    return expressionSpan;
+    return rowDiv;
 };
 
-var showEndScreen = function () {
+/**
+ * Initialize page
+ */
+var initPage = function () {
+    var parent = document.querySelector('.container.expressions');
+    parent.innerHTML = '';
+};
+
+/**
+ * Change operator
+ * @param operatorName
+ * @param val
+ */
+function changeOperator(operatorName, val) {
+    operators[operatorName] = val;
+}
+
+/**
+ * Shows end screen
+ */
+var showEndScreen = function (message) {
     var overlay = document.querySelector('div.end-screen');
+    var text = document.querySelector('.end-screen__title');
+    text.innerText = message;
     overlay.style.left = '0';
 };
 
+/**
+ * Hides end screen
+ */
 var hideEndScreen = function () {
     var overlay = document.querySelector('div.end-screen');
     overlay.style.left = '-100%';
 };
 
+var clearTests = function (){
+    Object.keys(tests).forEach( function(key) { delete tests[key]; });
+}
+/**
+ * Starts new Test session
+ */
+function startNewTest() {
+    initPage();
+    clearTests();
+    generateTests();
+    highlightActiveInput();
+}
 
-initDropDown();
-initCheckBtn();
+var askToStartNewTest = function (message) {
+    showEndScreen(message);
+};
+
+/**
+ * Generates single test
+ * @param id
+ */
+function generateSingleTest(id) {
+    tests[id] = getTest();
+    tests[id].resolved = false;
+    var row = makeRowLayout();
+    document.querySelector('.container.expressions').appendChild(row);
+
+    var span = row.firstChild.firstChild;
+    span.innerText = tests[id].value;
+    span.dataset.id = id;
+}
+
+/**
+ * Generates all tests on the page
+ */
+var generateTests = function () {
+    for (var i = 0; i < NUMBER_OF_TESTS; i++) {
+       generateSingleTest(i);
+    }
+    console.log(tests);
+};
+
+/**
+ * Remakes tests after settings changes
+ * @param setting
+ */
+var onSettingsChange = function (setting) {
+    var selectedOperators = getSelectedOperators();
+    var expressionSpans = document.querySelectorAll('.expression');
+
+    if ( setting === 'operatorRemoved' ) {
+        Array.prototype.forEach.call(expressionSpans, span => {
+            if ( !selectedOperators.includes(tests[span.dataset.id].operator)) {
+                var row = span.parentNode.parentNode;
+                row.parentNode.removeChild(row);
+                generateSingleTest(span.dataset.id);
+            }
+        })
+    }
+    if ( setting === 'operatorAdded' ) {
+        Array.prototype.forEach.call(expressionSpans, (span, index) => {
+            console.log('111');
+        })
+    }
+
+};
+
 initStartBtn();
+initSettingsDropDown();
+initCheckBtn();
+startNewTest();
+
 
 
 
