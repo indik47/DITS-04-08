@@ -8,7 +8,7 @@ var initSettingsDropDown = function (){
 
     Array.prototype.forEach.call(dropDown.children, child => {
         child.addEventListener('click', function () {
-            //toggle selection on settings dropdown
+            //toggle item display in settings dropdown
             child.classList.toggle('selected');
 
             //update operators object and document
@@ -45,12 +45,12 @@ var initCheckBtn = function () {
             else {
                 tests[testId].resolved = false;
                 input.nextSibling.innerText = false;
-                input.nextSibling.style.backgroundColor = '#984053';
+                input.nextSibling.style.backgroundColor = 'var(--main-color-failed)';
             }
         });
 
-        if ( tests.isResolved() ) {
-            showEndScreen('You completed the test!');
+        if ( tests.areResolved() ) {
+            showOverlayPrompt('You completed the test!');
         }
     });
 };
@@ -77,7 +77,7 @@ var highlightActiveInput = function () {
  */
 var initStartBtn = function () {
     document.querySelector('.btn.start').addEventListener('click', function () {
-        tests.isResolved() ? askToStartNewTest('You completed the test!'): askToStartNewTest('Current test not finished');
+        tests.areResolved() ? showOverlayPrompt('You completed the test!'): showOverlayPrompt('Current test not finished');
     });
 };
 
@@ -86,14 +86,14 @@ var initStartBtn = function () {
  */
 document.querySelector('.btn.end-screen__start').addEventListener('click', function () {
     startNewTest();
-    hideEndScreen();
+    hideOverlayPrompt();
 });
 
 /**
  * Cancel again button at end screen
  */
 document.querySelector('.btn.end-screen__cancel').addEventListener('click', function () {
-    hideEndScreen();
+    hideOverlayPrompt();
 });
 
 

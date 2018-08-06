@@ -11,6 +11,7 @@ body, html {
     --main-color: #4aad8a;
     --secondary-color: #9aaba4;
     --main-color-hover: #487866;
+    --main-color-failed: #984053;
 }
 
 .container {
